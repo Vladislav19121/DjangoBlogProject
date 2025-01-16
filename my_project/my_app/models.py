@@ -37,7 +37,3 @@ class Rating(models.Model):
     post = models.ForeignKey(Post, related_name='ratings', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
-
-    
-    
-#new code
