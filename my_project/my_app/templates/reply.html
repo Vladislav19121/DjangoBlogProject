@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ответ на комментарий</title>
+    <style>
+        /* Скрыть форму по умолчанию */
+
+        /* Показать форму, когда чекбокс отмечен */
+        #toggleReply:checked + .reply-form {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ответ на комментарий</h1>
+
+        <div class="comment">
+            <p><strong>{{ comment.author }}:</strong> {{ comment.content }}</p>
+        </div>
+
+        <input type="checkbox" id="toggleReply" style="display: none;">
+
+
+        <div class="reply-form">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}  <!-- Отображение формы -->
+
+                <button type="submit">Отправить ответ</button>
+            </form>
+        </div>
+
+        <a href="{% url 'post' post_id=comment.post.id %}">Назад к посту</a>
+    </div>
+</body>
+</html>

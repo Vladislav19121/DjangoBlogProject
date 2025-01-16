@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+(% load static %)
+
+{% block content %}
+
+  <h2>Post title: {{ post.title }}</h2>
+  <p>Post content: {{ post.content }}</p>
+  <p>Author: {{ post.author }}</p>
+
+  <h4>All Ratings:</h4>
+<ul>
+    {% for rating in ratings %}
+        <li>User: {{ rating.user }} - Score: {{ rating.score }}</li>
+            {% if user == rating.user or user.is_staff %}
+            <a href="{% url 'delete_rating' rating.id %}" class="btn btn-danger btn-sm">Delete Rating</a>
+            {% endif %}
+    {% endfor %}
+  
+  {% if user.is_authenticated %}
+  <h3>Add a Rating</h3>
+  <form method="post" action="{% url 'rating_for_post' post.id %}">
+      {% csrf_token %}
+      {{ form.as_p }}  <!-- Отображение поля для ввода рейтинга -->
+      <button type="submit" class="btn btn-primary">Submit Rating</button>
+  </form>
+  {% endif %}
+
+  {% if user == post.author %}
+    <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary">Edit Post</a>
+    <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete Post</a>
+  {% endif %}
+
+  <h3>Comments</h3>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.author }}: {{ comment.content }}</li>
+        {% if user == comment.author or user.is_staff %}
+        <a href="{% url 'delete_comment' comment.id %}" class="btn btn-danger btn-sm">Удалить комментарий</a>
+            {% endif %}
+          </li>
+      <ul>
+        {% for reply in comment.replies %} 
+          <li>
+            {{ reply.user }}: {{ reply.text }}
+            {% if user == reply.user or user.is_staff %}
+              <a href="{% url 'delete_reply' reply.id %}" class="btn btn-danger btn-sm">Delete Reply</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'add_reply' comment.id %}" class="submit">Ответить</a>
+    {% empty %}
+      <li>No comments yet.</li>
+    {% endfor %}
+  </ul>
+
+  {% if user.is_authenticated %}
+    <h3>Add a comment</h3>
+    <form method="post" action="{% url 'add_comment' post.id %}">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button type="submit" class="btn btn-secondary">Submit</button> <!-- Изменено на кнопку -->
+    </form>
+    
+  {% else %}
+    <p>Please <a href="{% url 'login' %}">login</a> to add a comment.</p>
+  {% endif %}
+{% endblock %}
